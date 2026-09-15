@@ -1,79 +1,43 @@
-# Meu Estoque de Componentes Eletrônicos
+# Kit Box 🧰
 
-Aplicativo Android desenvolvido com **Kotlin e Jetpack Compose** para cadastrar, consultar, editar e excluir componentes eletrônicos usados em casa ou em um laboratório. O projeto foi estruturado para demonstrar os principais conceitos de estado, navegação, persistência local, ciclo de vida, efeitos colaterais, listas e câmera.
+**Kit Box** é uma aplicação mobile desenvolvida em Kotlin e Jetpack Compose para simplificar e organizar o gerenciamento de inventário de componentes eletrônicos (como resistores, capacitores, sensores e microcontroladores).
 
-## Funcionalidades
+A ferramenta foi projetada com foco em usabilidade, performance e clareza visual, permitindo que estudantes, hobistas e engenheiros monitorem rapidamente o volume de peças disponíveis em seu estoque físico.
 
-O aplicativo inicia com três registros de exemplo e permite cadastrar resistores, capacitores, sensores, microcontroladores e outros componentes. Cada registro possui nome, categoria, encapsulamento, quantidade, estoque mínimo, observações e marcação de favorito. Os registros podem ser filtrados por texto, categoria, favoritos e estoque baixo.
 
-A tela inicial usa cartões com indicador de estoque e disponibiliza ações de detalhe, edição, exclusão e alteração de favorito. A tela de detalhes recebe o identificador do registro pela rota de navegação. O formulário é reutilizado para cadastro e edição.
+---
 
-A tela de câmera é aberta em uma **Activity separada** por meio de `Intent`. Ela utiliza CameraX para pré-visualização, captura de fotografias e gravação de vídeos. O analisador de imagem usa ML Kit Barcode Scanning para detectar códigos de barras e QR Codes.
+## ✨ Principais Recursos
 
-## Requisitos demonstrados
+- **Gerenciamento de Estoque (CRUD):** Cadastro completo, consulta detalhada, edição e remoção de componentes eletrônicos.
+- **Alertas Visuais de Reposição:** Barra de progresso visual que altera dinamicamente sua cor (verde para estoque regular e vermelho com tag *"Repor em breve"* quando atinge o limite mínimo definido)[cite: 3].
+- **Filtros e Busca Inteligente:** Pesquisa em tempo real por nome ou localização física, além de chips para filtragem rápida por favoritos e categorias (Resistor, Sensor, Microcontrolador, Capacitor, Outro)[cite: 3].
+- **Organização Física:** Registro da localização exata do item em organizadores/gaveteiros (ex: *"Gaveta 1"*, *"Gaveta 4"*)[cite: 3].
+- **Interface Reativa:** Suporte a feedback visual em formulários (*Sliders*, *Switches*), modais de confirmação de exclusão para evitar perda de dados e tratamento do estado de lista vazia (*Empty State*)[cite: 3].
+- **Persistência Local:** Salvamento seguro do inventário via **DataStore** e **Gson**[cite: 3].
 
-| Conceito | Implementação no projeto |
-|---|---|
-| `TextField` | Busca na `HomeScreen` e campos do formulário em `ComponentFormScreen`. |
-| `RadioButton` | Seleção de categoria no formulário. |
-| `Switch` | Filtro de favoritos e marcação do componente como favorito. |
-| `Slider` | Estoque mínimo no formulário e filtro visual de estoque baixo na Home. |
-| `Column` e `Spacer` | Organização vertical de telas, cartões e seções. |
-| `NavHost` e rotas | Rotas `home`, `form?componentId={componentId}` e `detail/{componentId}` em `MainActivity`. |
-| Controle de estado na navegação | `rememberNavController`, `popBackStack` e leitura de `componentId` via `NavBackStackEntry`. |
-| `remember` | Lista filtrada calculada em `HomeScreen` sem trabalho desnecessário a cada recomposição. |
-| `rememberSaveable` | Busca, filtros, campos do formulário, favorito, estado de gravação e código detectado. |
-| Recomposition | Alterações de estado atualizam cards, contadores, filtros e validações sem recriar a Activity. |
-| Ciclo de vida | `MainActivity` registra `onCreate`, `onStart`, `onResume`, `onPause`, `onStop` e `onDestroy` no `InventoryViewModel`. |
-| `LaunchedEffect` | Exibição de Toast de validação fora da composição visual. |
-| `DisposableEffect` | Vinculação e liberação de CameraX e do analisador ML Kit conforme o ciclo da tela. |
-| `Activity` + Compose | A UI é declarada em `setContent`; as Activities continuam controlando o ciclo de vida. |
-| `Intent` | `MainActivity` abre `CameraActivity` e a câmera retorna ao estoque com `finish()`. |
-| `LazyColumn` | Lista principal de componentes. |
-| `LazyRow` | Filtros horizontais por categoria. |
-| `LazyHorizontalGrid` | Resumo visual por categoria em grade. |
-| DataStore | Lista de componentes serializada em JSON dentro de `Preferences DataStore`. |
-| CameraX + ML Kit | Captura de foto, vídeo e leitura de código na `CameraScreen`. |
+---
 
-## Estrutura do projeto
+## 📋 Requisitos Demonstrados
+
+- **CRUD Completo:** Criação, leitura, atualização e exclusão de itens de estoque[cite: 3].
+- **Gerenciamento de Estado Reativo:** Interface reativa construída totalmente com Jetpack Compose[cite: 3].
+- **Persistência de Dados Local:** Armazenamento contínuo dos dados do app com DataStore/Gson[cite: 3].
+- **Navegação Declarativa:** Navegação estruturada entre telas (*MainScreen*, *FormScreen*, *DetailScreen*)[cite: 3].
+- **Componentes Customizados & UX:** Uso de componentes visuais do Material 3 com validações de entrada e alertas de estoque[cite: 3].
+
+---
+
+## 📂 Estrutura do Projeto
 
 ```text
-app/src/main/java/com/example/meuestoquedecomponentes/
-├── MainActivity.kt                 # NavHost, rotas e ciclo de vida
-├── CameraActivity.kt               # Activity separada para a câmera
-├── data/
-│   ├── Component.kt                 # Modelo e categorias
-│   └── InventoryRepository.kt      # Persistência com DataStore
-├── screens/
-│   ├── HomeScreen.kt                # Busca, filtros, listas e CRUD visual
-│   ├── ComponentFormScreen.kt       # Cadastro e edição
-│   ├── ComponentDetailScreen.kt     # Detalhamento por parâmetro de rota
-│   └── CameraScreen.kt              # CameraX, vídeo e ML Kit
-└── ui/
-    ├── InventoryViewModel.kt        # Estado e operações do domínio
-    └── Theme.kt                     # Tema Material 3
-```
-
-## Como executar
-
-Abra a pasta `meu-estoque-componentes` no Android Studio atualizado. Aguarde a sincronização do Gradle e execute a configuração `app` em um emulador ou dispositivo com Android 8.0 (API 26) ou superior. Para testar a câmera, conceda a permissão solicitada na primeira abertura da tela de captura.
-
-O módulo usa `compileSdk 35`, `targetSdk 35`, Java 17, Kotlin 2.0.21, Android Gradle Plugin 8.7.3 e Jetpack Compose Material 3. As dependências CameraX e ML Kit estão declaradas no `app/build.gradle.kts`.
-
-O DataStore é local e não requer servidor. Quando o aplicativo é instalado pela primeira vez, a ausência de dados gravados faz o repositório mostrar os três registros de exemplo. Depois da primeira operação de gravação, os dados passam a ser lidos do armazenamento local.
-
-## Observações para apresentação
-
-A câmera é uma extensão prática do cadastro: o valor detectado aparece como Toast para demonstrar a análise de imagem. A integração não preenche automaticamente um registro porque o formato de código de cada fornecedor pode variar; a lógica pode ser estendida com uma tabela de códigos ou com uma API.
-
-O `Slider` de filtro de estoque baixo funciona como um estado booleano graduado: qualquer valor maior que zero ativa a regra `quantidade <= estoque mínimo`. No formulário, o mesmo componente representa diretamente o limite de unidades.
-
-## Referências
-
-[1]: https://developer.android.com/develop/ui/compose "Jetpack Compose — Android Developers"
-
-[2]: https://developer.android.com/topic/libraries/architecture/datastore "DataStore — Android Developers"
-
-[3]: https://developer.android.com/training/camerax "CameraX — Android Developers"
-
-[4]: https://developers.google.com/ml-kit/vision/barcode-scanning/android "ML Kit Barcode Scanning — Google Developers"
+com.example.kitbox/
+│
+├── data/                  # Gerenciamento de persistência local (DataStore e Gson)
+├── model/                 # Modelos de dados (Componente, Categorias)
+├── ui/
+│   ├── components/        # Componentes visuais reutilizáveis (Cards, Inputs, Dialogs)
+│   ├── navigation/        # Grafo de navegação do aplicativo
+│   ├── screens/           # Telas (MainScreen, FormScreen, DetailScreen)
+│   └── theme/             # Tema visual, cores e tipografia
+└── viewmodel/             # ViewModels para controle de estado da UI
